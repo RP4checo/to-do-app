@@ -47,6 +47,7 @@ export default function TodosPage() {
   const [aiTitle, setAiTitle] = useState<string>("");
   const [aiDescription, setAiDescription] = useState<string>("");
   const [aiPrompt, setAiPrompt] = useState<string>("");
+  const [promptError, setPromptError] = useState<string>("");
   const [enhanceTargetId, setEnhanceTargetId] = useState<string | number | null>(null);
 
   // Fetch from Supabase
@@ -143,24 +144,32 @@ export default function TodosPage() {
     setAiTitle(task.title ?? "");
     setAiDescription(task.description ?? "");
     setAiPrompt("");
+    setPromptError("");
     setAiLoading(false);
     setShowEnhanceModal(true);
   }
 
   async function onEnhanceNow() {
     if (!enhanceTargetId) return;
+    const p = aiPrompt.trim();
+    if (!p) {
+      setPromptError("Please enter a prompt before enhancing.");
+      return;
+    }
+    setPromptError("");
     setAiLoading(true);
     try {
       const { title, description } = await callEnhance({
         id: enhanceTargetId,
         title: aiTitle,
         description: aiDescription || undefined,
-        prompt: aiPrompt || undefined,
+        prompt: p,
       });
       setAiTitle(title ?? aiTitle);
       setAiDescription((description ?? aiDescription) ?? "");
     } catch (e) {
       console.error("Enhance failed:", e);
+      setPromptError("Sorry, something went wrong while enhancing. Please try again.");
     } finally {
       setAiLoading(false);
     }
@@ -367,13 +376,16 @@ export default function TodosPage() {
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
               />
+              {promptError ? (
+                <p className="text-sm text-red-600 dark:text-red-400 -mt-3 mb-3">{promptError}</p>
+              ) : null}
 
               <div className="flex items-center justify-between">
                 <button
                   type="button"
                   onClick={onEnhanceNow}
-                  disabled={aiLoading}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg border-2 border-primary-light bg-primary-light/15 text-white shadow transition-all duration-200 hover:bg-primary-light/20 hover:border-primary-dark hover:scale-105 hover:-translate-y-0.5 hover:shadow-xl hover:ring-2 hover:ring-primary-light disabled:opacity-60"
+                  disabled={aiLoading || aiPrompt.trim().length === 0}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white shadow transition-all duration-200 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {aiLoading ? "Enhancing…" : "Enhance"}
                 </button>
