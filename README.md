@@ -38,7 +38,7 @@ src/
 - Project uses ESLint and Tailwind; formatting is handled by the toolchain.
 
 ## Deployment
-- Deploy as a standard Next.js app (Vercel or Node host). Ensure env vars are set in the host.
+- Deploy as a standard Next.js app (Vercel host). Ensure env vars are set in the host.
 
 ## Data Flow (high‑level)
 - UI ↔ Supabase: CRUD ops and realtime updates for the `todos` table.
