@@ -43,7 +43,3 @@ src/
 ## Data Flow (high‑level)
 - UI ↔ Supabase: CRUD ops and realtime updates for the `todos` table.
 - UI ↔ n8n Webhook: POST `{ id, title, description, prompt }`; response normalizes to `{ title, description }` and updates modal inputs only. Persist on “Apply”.
-
-## Security Notes
-- Do not commit secrets. Only public, anonymous Supabase key is used client‑side.
-- Assume RLS policies on tables as appropriate.
