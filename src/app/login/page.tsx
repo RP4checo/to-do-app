@@ -25,6 +25,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <form onSubmit={onSubmit} className="form">
         <p id="heading">Login</p>
+        <p className="-mt-2 mb-4 text-center text-sm opacity-70">Enter any value</p>
         
         <div className="field">
           <svg className="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -55,10 +56,7 @@ export default function LoginPage() {
         
         <div className="btn">
           <button type="submit" className="button1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-          <button type="button" className="button2">Sign Up</button>
         </div>
-        
-        <button type="button" className="button3">Forgot Password</button>
       </form>
     </div>
   );

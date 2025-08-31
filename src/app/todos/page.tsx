@@ -197,12 +197,14 @@ export default function TodosPage() {
   }
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-200">
+    <div className="min-h-screen transition-colors duration-200">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Header */}
-        <header className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-primary-light dark:text-primary-dark">To-Do App</h1>
-          <span aria-hidden="true" />
+        <header className="mb-8">
+          <h1 className="text-6xl font-extrabold text-center">
+            To-Do App
+            <span role="img" aria-label="pencil" className="ml-2 align-middle">✏️</span>
+          </h1>
         </header>
 
         {/* Add Todo */}
@@ -342,18 +344,28 @@ export default function TodosPage() {
         </div>
 
         {/* Stats */}
-        <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 flex justify-between">
+        <div className="mt-6 text-sm text-gray-300 flex justify-between">
           <span>{todos.length} {todos.length === 1 ? "item" : "items"}</span>
-          <button onClick={clearCompleted} className="hover:text-primary-light dark:hover:text-primary-dark">
+          <button
+            onClick={clearCompleted}
+            className="px-3 py-1.5 rounded-md border-2 border-slate-200 bg-white text-black font-semibold transition-all duration-200 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-slate-300"
+          >
             Clear completed
           </button>
         </div>
 
         {/* Enhance Modal */}
         {showEnhanceModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-            <div className="w-full max-w-lg rounded-lg bg-white dark:bg-gray-900 p-6 shadow-xl">
-              <h3 className="text-xl font-semibold mb-4">Enhance with AI</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onCancelEnhanced}>
+            <div className="w-full max-w-lg rounded-lg bg-white dark:bg-gray-900 p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-xl font-semibold">Enhance with AI</h3>
+                <button aria-label="Close" onClick={onCancelEnhanced} className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+                    <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 11-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
 
               <label className="text-sm font-medium mb-1 block">Title</label>
               <input
@@ -385,7 +397,7 @@ export default function TodosPage() {
                   type="button"
                   onClick={onEnhanceNow}
                   disabled={aiLoading || aiPrompt.trim().length === 0}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white shadow transition-all duration-200 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white shadow transition-all duration-200 hover:bg-blue-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {aiLoading ? "Enhancing…" : "Enhance"}
                 </button>
