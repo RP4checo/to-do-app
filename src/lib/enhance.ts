@@ -1,25 +1,13 @@
 // src/lib/enhance.ts
-export type EnhancePayload = {
-  id: string | number;
-  title: string;
-  description?: string | null;
-  prompt: string; // required
-};
-
-export type EnhanceResponse = {
-  // accept flexible keys from n8n; we'll normalize below
-  title?: string;
-  description?: string | null;
-  enhancedTitle?: string;
-  enhanced_description?: string | null;
-  data?: { title?: string; description?: string | null };
-  output?: { title?: string; description?: string | null };
-};
+import type { EnhancePayload, EnhanceResponseShape, EnhanceNormalized } from "@/types";
 
 const FALLBACK_URL = "https://n8n.synapticalhub.com/webhook/test-shadow-light";
 const ENHANCE_URL = process.env.NEXT_PUBLIC_N8N_ENHANCE_URL || FALLBACK_URL;
 
-export async function callEnhance(payload: EnhancePayload): Promise<{ title: string; description: string | null }> {
+/**
+ * Calls the n8n enhance webhook and normalizes the response.
+ */
+export async function callEnhance(payload: EnhancePayload): Promise<EnhanceNormalized> {
   // Client-side timeout via AbortController (~25s)
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25_000);
@@ -47,7 +35,7 @@ export async function callEnhance(payload: EnhancePayload): Promise<{ title: str
     }
 
     // Tolerant JSON parsing; accept flat or nested { data: { title, description } }
-    let json: EnhanceResponse | undefined;
+    let json: EnhanceResponseShape | undefined;
     try {
       json = await res.json();
     } catch {

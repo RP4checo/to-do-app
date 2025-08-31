@@ -1,19 +1,19 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { CredentialsErrors } from "@/types";
 
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const nextErrors: typeof errors = {};
+    const nextErrors: CredentialsErrors = {};
     if (!username.trim()) nextErrors.username = "Username is required";
     if (!password.trim()) nextErrors.password = "Password is required";
-    setErrors(nextErrors);
+    // no UI for errors; keep validation only
     if (Object.keys(nextErrors).length === 0) {
       localStorage.setItem("auth", "1");
       localStorage.setItem("username", username.trim());

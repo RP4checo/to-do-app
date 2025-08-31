@@ -4,15 +4,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { callEnhance } from "@/lib/enhance";
 import { Sparkles } from "lucide-react";
-
-type Todo = {
-  id: string;
-  title: string;
-  description: string | null;
-  completed: boolean;
-  created_at: string;
-  updated_at: string;
-};
+import { TABLE_TODOS, CHANNEL_TODOS, ROUTE_LOGIN, UI_APP_TITLE } from "@/lib/constants";
+import type { Todo } from "@/types";
 
 export default function TodosPage() {
   const router = useRouter();
@@ -20,7 +13,7 @@ export default function TodosPage() {
   // Gate by our fake login
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.getItem("auth") !== "1") {
-      router.replace("/login");
+      router.replace(ROUTE_LOGIN);
     }
   }, [router]);
 
@@ -53,7 +46,7 @@ export default function TodosPage() {
   // Fetch from Supabase
   const loadTodos = async () => {
     const { data, error } = await supabase
-      .from("todos")
+      .from(TABLE_TODOS)
       .select("*")
       .order("created_at", { ascending: true });
     if (!error && data) setTodos(data as Todo[]);
@@ -64,10 +57,10 @@ export default function TodosPage() {
     loadTodos();
 
     const channel = supabase
-      .channel("todos-realtime")
+      .channel(CHANNEL_TODOS)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "todos" },
+        { event: "*", schema: "public", table: TABLE_TODOS },
         () => loadTodos()
       )
       .subscribe();
@@ -83,7 +76,7 @@ export default function TodosPage() {
     const t = title.trim();
     const d = description.trim();
     if (!t) return;
-    await supabase.from("todos").insert([{ title: t, description: d || null }]);
+    await supabase.from(TABLE_TODOS).insert([{ title: t, description: d || null }]);
     setTitle("");
     setDescription("");
     // no setTodos here; realtime will update the list
@@ -93,7 +86,7 @@ export default function TodosPage() {
   const toggleCompleted = async (index: number) => {
     const todo = todos[index];
     await supabase
-      .from("todos")
+      .from(TABLE_TODOS)
       .update({ completed: !todo.completed })
       .eq("id", todo.id);
   };
@@ -101,11 +94,11 @@ export default function TodosPage() {
   // DELETE
   const remove = async (index: number) => {
     const todo = todos[index];
-    await supabase.from("todos").delete().eq("id", todo.id);
+    await supabase.from(TABLE_TODOS).delete().eq("id", todo.id);
   };
 
   const clearCompleted = async () => {
-    await supabase.from("todos").delete().eq("completed", true);
+    await supabase.from(TABLE_TODOS).delete().eq("completed", true);
   };
 
   // EDIT
@@ -122,7 +115,7 @@ export default function TodosPage() {
     const t = editTitle.trim();
     if (!t) return;
     await supabase
-      .from("todos")
+      .from(TABLE_TODOS)
       .update({ title: t, description: editDescription.trim() || null })
       .eq("id", td.id);
 
@@ -202,7 +195,7 @@ export default function TodosPage() {
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-6xl font-extrabold text-center">
-            To-Do App
+            {UI_APP_TITLE}
             <span role="img" aria-label="pencil" className="ml-2 align-middle">✏️</span>
           </h1>
         </header>
